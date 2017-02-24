@@ -93,7 +93,7 @@
                                     <tbody>
                                     {% for field in assest_info.field_list %}
                                         <tr class="">
-                                            <td class="field_id_td">{{ field.field_id }}</td>
+                                            <td class="field_info_td field_id_td">{{ field.field_id }}</td>
                                             <td  class=" field_info_td field_name_td">{{ field.field_name }}</td>
                                             <td  class=" field_info_td field_display_td">{{ field.field_display }}</td>
                                             <td  class=" field_info_td field_show_td">{{ field.field_show }}</td>
@@ -237,14 +237,13 @@
         // 取消
         function cancle_field(ths) {
             var ths_tr = $(ths).parents("tr");
-            var hide_td = ths_tr.find('td.hide').length;
+            var hide_td = ths_tr.find('td.field_id_td').length;
             if(hide_td==0){
                 // 新增的时候取消
-                console.log(ths_tr);
                 ths_tr.remove();
 
             } else {
-                var all_data = ths_tr.find("td.data");
+                var all_data = ths_tr.find("td.field_info_td");
                 $.each(all_data, function () {
                     var value = $(this).children('input').attr('old_value');
                     $(this).html(value);
@@ -256,6 +255,10 @@
             }
         }
 
+        // 编辑 field
+        function edit_field(ths) {
+
+        }
 
         // 删除 field
         function delete_field(ths) {
