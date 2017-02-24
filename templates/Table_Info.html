@@ -1,0 +1,223 @@
+{% extends "base.html" %}
+{% load assest_tag %}
+{% block title %}
+    {{ table_name }}表管理
+{% endblock %}
+{% block css %}
+<link href="/static/js/advanced-datatable/css/demo_table.css" rel="stylesheet">
+{% endblock css %}
+
+
+{% block content %}
+
+
+    <div class="row">
+        <div class="col-sm-12">
+            <section class="panel">
+                <header class="panel-heading" id="table_name" name="{{ table_name }}">
+                    {{ table_name }} 表信息
+                    <span class="tools pull-right">
+                <a href="javascript:;" class="fa fa-chevron-down"></a>
+                <a href="javascript:;" class="fa fa-times"></a>
+             </span>
+                </header>
+                <div class="panel-body">
+                    <div class="adv-table">
+                        <a class="btn btn-primary" onclick="add_data()"  >
+                            添加记录
+                        </a>
+                        <table class="display table table-bordered table-striped" id="dynamic-table">
+                            <thead>
+
+                            <tr>
+                                <td class="hide">ID</td>
+                                {% for field in table_field %}
+                                    <th class="th_name" key="{{ field.field_name }}">{{ field.field_display }}({{ field.field_name }})</th>
+                                {% endfor %}
+                                <th>修改</th>
+                                <th>删除</th>
+                            </tr>
+                            </thead>
+                            <tbody >
+                            {% for field_dic in data %}
+                                <tr class="">
+                                    <td class="hide">{% get_value field_dic '_id' %}</td>
+                                    {% for field in table_field %}
+                                        <td class="data"
+                                            key={{ field.field_name }}>{% get_value field_dic field.field_name %}</td>
+                                    {% endfor %}
+                                    <td class="edit_a"><a href="javascript:;" onclick="edit_table(this)">修改</a></td>
+                                    <td class="delete_a"><a href="javascript:;" onclick="delete_table(this)">删除</a></td>
+                                </tr>
+                            {% endfor %}
+
+                            </tbody>
+
+                        </table>
+                    </div>
+                </div>
+
+            </section>
+
+        </div>
+    </div>
+
+
+{% endblock %}
+
+
+{% block script %}
+    <!--dynamic table-->
+    <script type="text/javascript" language="javascript"
+            src="/static/js/advanced-datatable/js/jquery.dataTables.js"></script>
+    <script type="text/javascript" src="/static/js/data-tables/DT_bootstrap.js"></script>
+    <script src="/static/js/dynamic_table_init.js"></script>
+    <script src="/static/js/editable-table2.js"></script>
+    <script>
+
+    // 添加字段
+    function add_data() {
+        var tbody = $("tbody");
+        var th = $("thead");
+        var all_thead = th.find('.th_name');
+        var new_td_html = "";
+        $.each(all_thead,function () {
+            new_td_html += '<td class="data" key="'+$(this).attr("key")+'"><input></input></td>'
+        });
+        var new_tr_html = '<tr>'+new_td_html+'<td class="edit_a"><a href="javascript:;" onclick="new_data(this)">新增</a></td>'+
+                        '<td class="delete_a"><a href="javascript:;" onclick="cancle_table(this)">取消</a></td>'+'</tr>';
+        tbody.prepend(new_tr_html);
+
+    }
+    function new_data(ths) {
+            var ths_tr = $(ths).parents("tr");
+            var all_data = ths_tr.find("td.data");
+            var table_name = $('#table_name').attr('name');
+            var field_info = {};
+            $.each(all_data, function () {
+                var value = $(this).children('input').val();
+                var key = $(this).attr('key');
+                $(this).html(value);
+                field_info[key] = value
+            });
+            var data = {
+                table_name: table_name,
+                field_info: field_info,
+                action: 'add'
+            };
+            console.log(JSON.stringify(data));
+            $.ajax({
+                url: window.location.href,
+                type: 'POST',
+                cache: false,
+                data: JSON.stringify(data),
+                processData: false,
+                contentType: false
+            });
+            var edit_html = '<a  href="javascript:;" onclick="edit_table(this)">修改</a>';
+            var delete_html = '<a  href="javascript:;" onclick="delete_table(this)">删除</a>';
+            ths_tr.find('.edit_a ').html(edit_html);
+            ths_tr.find(".delete_a ").html(delete_html);
+    }
+
+        // 编辑表数据,自己写一个
+        function edit_table(ths) {
+            var all_data = $(ths).parents('tr').find(' .data');
+            {#            console.log( $(ths));#}
+            $.each(all_data, function () {
+                var data = $(this).html();
+                var input_data = '<input old_value="' + data + '" value="' + data + '">';
+                $(this).html(input_data);
+                var save_html = '<a href="javascript:;" onclick="save_table(this)">保存</a>';
+                var cancle_html = '<a href="javascript:;" onclick="cancle_table(this)">取消</a>';
+                var ths_tr = $(ths).parents("tr");
+                ths_tr.find('.edit_a ').html(save_html);
+                ths_tr.find(".delete_a ").html(cancle_html);
+            });
+        }
+
+        function cancle_table(ths) {
+            var ths_tr = $(ths).parents("tr");
+            var hide_td = ths_tr.find('td.hide').length;
+            if(hide_td==0){
+                // 新增的时候取消
+                console.log(ths_tr);
+                ths_tr.remove();
+
+            } else {
+                var all_data = ths_tr.find("td.data");
+                $.each(all_data, function () {
+                    var value = $(this).children('input').attr('old_value');
+                    $(this).html(value);
+                });
+                var edit_html = '<a  href="javascript:;" onclick="edit_table(this)">修改</a>';
+                var delete_html = '<a  href="javascript:;" onclick="delete_table(this)">删除</a>';
+                ths_tr.find('.edit_a ').html(edit_html);
+                ths_tr.find(".delete_a ").html(delete_html);
+            }
+
+        }
+
+
+        // 保存信息
+        function save_table(ths) {
+            var ths_tr = $(ths).parents("tr");
+            var all_data = ths_tr.find("td.data");
+            var data_id = ths_tr.find('td.hide').text();
+            var table_name = $('#table_name').attr('name');
+            var field_info = {};
+            $.each(all_data, function () {
+                var value = $(this).children('input').val();
+                var key = $(this).attr('key');
+                $(this).html(value);
+                field_info[key] = value
+            });
+            var data = {
+                table_name: table_name,
+                data_id: data_id,
+                field_info: field_info,
+                action: 'edit'
+            };
+            console.log(JSON.stringify(data));
+            $.ajax({
+                url: window.location.href,
+                type: 'POST',
+                cache: false,
+                data: JSON.stringify(data),
+                processData: false,
+                contentType: false
+            });
+            var edit_html = '<a  href="javascript:;" onclick="edit_table(this)">修改</a>';
+            var delete_html = '<a  href="javascript:;" onclick="delete_table(this)">删除</a>';
+            ths_tr.find('.edit_a ').html(edit_html);
+            ths_tr.find(".delete_a ").html(delete_html);
+
+        }
+
+        // 删除数据
+        function delete_table(ths) {
+            console.log($(ths).parents('tr').html());
+            var ths_tr = $(ths).parents("tr");
+            var data_id = ths_tr.find('td.hide').text();
+            var table_name = $('#table_name').attr('name');
+            var data = {
+                table_name: table_name,
+                data_id: data_id,
+                action: 'delete'
+            };
+            console.log(JSON.stringify(data));
+            $.ajax({
+                url: window.location.href,
+                type: 'POST',
+                cache: false,
+                data: JSON.stringify(data),
+                processData: false,
+                contentType: false
+            });
+
+            $(ths).parents('tr').remove();
+
+
+        }
+    </script>
+{% endblock %}

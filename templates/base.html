@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title> SinOps |{% block title %}
+      Base
+      {% endblock %}</title>
+  <!--common-->
+  <link href="/static/css/style.css" rel="stylesheet">
+  <link href="/static/css/style-responsive.css" rel="stylesheet">
+{% block css %}
+
+{% endblock %}
+
+</head>
+
+<body class="sticky-header">
+
+<section >
+    <!-- left side start-->
+    <div class="left-side sticky-left-side">
+
+        <!--logo and iconic logo start-->
+        <div class="logo">
+            <a ><img src="/static/images/logo.png" alt=""></a>
+        </div>
+
+        <div class="logo-icon text-center">
+            <a ><img src="/static/images/logo_icon.png" alt=""></a>
+        </div>
+        <!--logo and iconic logo end-->
+
+        <div class="left-side-inner">
+
+            <!-- visible to small devices only -->
+            <div class="visible-xs hidden-sm hidden-md hidden-lg">
+                <div class="media logged-user">
+                    <img alt="" src="/static/images/logo_icon.png" class="media-object">
+                    <div class="media-body">
+                        <h4><a href="#">hansz</a></h4>
+                    </div>
+                </div>
+
+                <h5 class="left-nav-title">Account Information</h5>
+                <ul class="nav nav-pills nav-stacked custom-nav">
+                  <li><a href="#"><i class="fa fa-user"></i> <span>Profile</span></a></li>
+                  <li><a href="#"><i class="fa fa-cog"></i> <span>Settings</span></a></li>
+                  <li><a href="#"><i class="fa fa-sign-out"></i> <span>Sign Out</span></a></li>
+                </ul>
+            </div>
+
+            <!--sidebar nav start-->
+            <ul class="nav nav-pills nav-stacked custom-nav">
+                <li class="index"><a href="/index" ><i class="fa fa-home"></i> <span>首页</span></a></li>
+                <li class="assest menu-list"><a href=""><i class="fa fa-laptop"></i> <span>资产表管理</span></a>
+                    <ul class="sub-menu-list">
+                        <li class="assest_create" ><a href="/assest/create">创建资产表</a></li>
+                        <li class="assest_manage"><a href="/assest/manage">管理资产表</a></li>
+                    </ul>
+                </li>
+                <li class="table  menu-list"><a href=""><i class="fa fa-laptop"></i> <span>资产表</span></a>
+                    <ul class="sub-menu-list">
+                        {% for table in table_list %}
+                            <li class="table_{{  table.name }}"><a href="/assest/table/{{ table.name }}/">{{ table.display_name }}</a></li>
+                        {% endfor %}
+                    </ul>
+                </li>
+            </ul>
+            <!--sidebar nav end-->
+
+        </div>
+    </div>
+    <!-- left side end-->
+
+    <!-- main content start-->
+
+    <div class="main-content" >
+
+        <!-- header section start-->
+        <div class="header-section">
+
+            <!--toggle button start-->
+            <a class="toggle-btn"><i class="fa fa-bars"></i></a>
+            <!--toggle button end-->
+
+            <!--search start-->
+            <form class="searchform" action="" method="post">
+                <input type="text" class="form-control" name="keyword" placeholder="Search here..." />
+            </form>
+            <!--search end-->
+
+            <!--notification menu start -->
+            <div class="menu-right">
+                <ul class="notification-menu">
+                    <li>
+                        <a href="#" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                            <img src="/static/images/logo_icon.png" alt="" />
+                            John Doe
+                            <span class="caret"></span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-usermenu pull-right">
+                            <li><a href="#"><i class="fa fa-user"></i>  Profile</a></li>
+                            <li><a href="#"><i class="fa fa-cog"></i>  Settings</a></li>
+                            <li><a href="#"><i class="fa fa-sign-out"></i> Log Out</a></li>
+                        </ul>
+                    </li>
+
+                </ul>
+            </div>
+            <!--notification menu end -->
+
+        </div>
+        <!-- header section end-->
+
+        <!-- page heading start-->
+        <div class="page-heading">
+            <h3>
+                {{ page_title }}
+            </h3>
+            <ul class="breadcrumb">
+                <li>
+                    <a href="#">{{ page_title }}</a>
+                </li>
+                <li class="active">{{ page_subtitle }} </li>
+            </ul>
+
+        </div>
+        <!-- page heading end-->
+        {% block content %}
+
+        {% endblock %}
+        <!--footer section start-->
+        <footer>
+            2017 &copy;  SinOps by hansz
+        </footer>
+        <!--footer section end-->
+
+
+    </div>
+    <!-- main content end-->
+</section>
+
+<!-- Placed js at the end of the document so the pages load faster -->
+<script src="/static/js/jquery-1.10.2.min.js"></script>
+<script src="/static/js/jquery-ui-1.9.2.custom.min.js"></script>
+<script src="/static/js/jquery-migrate-1.2.1.min.js"></script>
+<script src="/static/js/jquery.stepy.js"></script>
+<script src="/static/js/bootstrap.min.js"></script>
+<script src="/static/js/modernizr.min.js"></script>
+<script src="/static/js/jquery.nicescroll.js"></script>
+<!--common scripts for all pages-->
+<script src="/static/js/scripts.js"></script>
+<script>
+    /* 实现左侧菜单展开 */
+    var nav_li = '{{ active_nav_li }}';
+    var nav_sub_li = '{{ active_nav_sub_li }}';
+    $("."+nav_li).addClass('active');
+    if(nav_sub_li!=""){
+        $("."+nav_sub_li).addClass('active')
+    }
+</script>
+{% block script %}
+
+
+{% endblock %}
+</body>
+</html>

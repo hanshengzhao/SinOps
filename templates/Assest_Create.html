@@ -1,0 +1,225 @@
+{% extends "base.html" %}
+{% block title %}
+    资产表管理
+{% endblock %}
+{% block css %}
+    <link href="/static/css/jquery.stepy.css" rel="stylesheet">
+
+{% endblock css %}
+
+{% block content %}
+
+    <div class="wrapper">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="square-widget">
+                    <div class="widget-container">
+                        <div class="stepy-tab">
+                        </div>
+                        <fieldset title="表基本信息">
+                            <legend></legend>
+                            <div class="form-group">
+                                <label class="col-md-1 col-sm-1 control-label">表名称</label>
+                                <div class="col-md-2 col-sm-2">
+                                    <input id="table_name_input" type="text" required placeholder="table Name"
+                                           name="table_name"
+                                           class="form-control">
+                                </div>
+                                <label class="col-md-1 col-sm-1 control-label">表展示名称</label>
+                                <div class="col-md-2 col-sm-2">
+                                    <input id="table_display_name_input" type="text" placeholder="table display name "
+                                           name="table_display_name" class="form-control">
+                                </div>
+                            </div>
+
+                        </fieldset>
+
+                        <fieldset title="表字段">
+                            <legend></legend>
+                            <div>
+                                <section class="panel">
+                                    <header class="panel-heading">
+                                        字段列表
+                                        <span class="tools pull-right">
+                                            <a href="javascript:;" class="fa fa-chevron-down"></a>
+                                            <a href="javascript:;" class="fa fa-times"></a>
+                                        </span>
+                                    </header>
+                                    <div class="panel-body">
+                                        <table class="table table-hover" id="field_list">
+                                            <thead>
+                                            <tr>
+                                                <th>序号</th>
+                                                <th>字段名称</th>
+                                                <th>展示名称</th>
+                                                <th>是否展示</th>
+                                                <th>备注</th>
+                                                <th>操作</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            <tr>
+                                                <td class="order_num">0</td>
+                                                <td class="field_name_td">id</td>
+                                                <td class="field_display_name_td">ID</td>
+                                                <td class="field_show_td">false</td>
+                                                <td>默认ID字段</td>
+                                                <td><i class="fa fa-minus-square"></i></td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+
+                                </section>
+                            </div>
+                            <div class="form-inline">
+                                <div class="one_field" style="float: left">
+                                    <div class="form-group">
+                                        <label class="col-lg-4 col-sm-4 control-label">字段名称:</label>
+                                        <div class="col-lg-3">
+                                            <input type="text" class="form-control" name="field_name" id="field_name"
+                                                   placeholder="字段名称">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-lg-5 col-sm-5 control-label">字段展示名称:</label>
+                                        <div class="col-lg-3">
+                                            <input type="text" class="form-control" id="field_displayname"
+                                                   placeholder="字段展示名称">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                            <div class="checkbox">
+                                                <label class="col-lg-12">
+                                                    <input type="checkbox" class="form-control" id="field_show"> 是否展示
+                                                </label>
+                                            </div>
+                                    </div>
+                                </div>
+                                <a class="btn btn-primary" onclick="add_field()" style="margin-left:25px">
+                                    添加字段
+                                </a>
+
+                            </div>
+
+                        </fieldset>
+                        <button class="btn btn-info " onclick="create_table()">
+                            创建表
+                        </button>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+{% endblock %}
+
+
+{% block script %}
+
+    <script src="/static/js/jquery.validate.min.js"></script>
+    <script>
+
+
+        /*=====STEPY WIZARD WITH VALIDATION====*/
+        $(function () {
+            $('#stepy_form').stepy({
+                backLabel: '上一步',
+                nextLabel: '下一步',
+                errorImage: true,
+                block: true,
+                description: true,
+                legend: false,
+                titleClick: true,
+                titleTarget: '#top_tabby',
+                validate: true
+            });
+
+            $('#stepy_form').validate({
+                errorPlacement: function (error, element) {
+                    $('#stepy_form div.stepy-error').append(error);
+                },
+
+                rules: {
+                    'table_name': {
+                        'required': true,
+                        'english': true
+                    },
+                    'table_display_name': 'required',
+                    {#                    'field_name':'required'#}
+                },
+                messages: {
+                    'table_name': {
+                        required: '请填写表名称'
+                    },
+                    'table_display_name': {
+                        required: '请填写表展示名称'
+                    }
+                }
+            });
+        });
+    </script>
+    <script>
+
+        function delete_field(ths) {
+            var delete_html = $(ths).parents('tr');
+            delete_html.remove();
+        }
+        function add_field() {
+            var field_list = $("#field_list");
+            var field_name = $("#field_name").val();
+            var field_displayname = $("#field_displayname").val();
+            var field_show = $("#field_show").prop('checked');
+            console.log(field_show);
+            var num = $('.order_num:last').text();
+            var field_html = '<tr  class="field_info_tr"><td class="order_num">' + 1 * (num * 1 + 1) + '</td><td class="field_name_td"> ' + field_name + '</td><td class="field_display_name_td">' + field_displayname
+                    + '</td><td class="field_show_td">'+field_show+'</td>'
+                    + '<td></td><td><i class="fa fa-minus-square" style="color:red" onclick="delete_field(this)"></i></td></tr> ';
+            $("#field_name").val('');
+            $("#field_displayname").val('');
+            field_list.append(field_html)
+
+
+        }
+
+        function create_table() {
+            var table_name = $("#table_name_input").val();
+            var table_display_name = $("#table_display_name_input").val();
+            var fields_info = $(".field_info_tr");
+            if (!table_name) {
+                alert('请填写表名称');
+            }else{
+                            <!-- 用formdata 构建表单 -->
+            var formData = new FormData();
+            formData.append('table_name', table_name);
+            formData.append('table_display_name', table_display_name);
+            $.each(fields_info, function () {
+                formData.append('field_name', $(this).find(".field_name_td").text());
+                formData.append('field_display_name', $(this).find(".field_display_name_td").text())
+            });
+            console.log(formData);
+            $.ajax({
+                url: "/assest/",
+                type: "POST",
+                processData: false,
+                contentType: false,
+                dataType: 'json',
+                data: formData,
+                success: function (data) {
+                    window.location = '/assest/manage'
+                },
+                error: function (data) {
+                     window.location = '/assest/manage'
+
+                }
+            });
+            }
+
+
+
+
+        }
+
+    </script>
+{% endblock %}
