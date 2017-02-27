@@ -44,6 +44,16 @@ def delete_Assest(table_id):
     table_collection.drop()
     return ret
 
+# 重命名一个资产表
+def rename_Assest(table_id,table_display_name):
+    collection = db['Assest']
+    # old_table_name = collection.find_one({'_id': ObjectId(table_id)})['name']
+    collection.update({'_id': ObjectId(table_id)},{"$set":{'display_name':table_display_name}})
+    # table_collection = db[old_table_name]
+    # table_collection.rename(table_name)
+
+
+
 
 # 更新一条field
 def update_one_field(field_id, field_dic, table_name, field_old):
@@ -51,8 +61,10 @@ def update_one_field(field_id, field_dic, table_name, field_old):
     data = field_dic
     if field_id == "":
         # 新增
-        data['field_id'] = uuid.uuid4()
+        data['field_id'] = str(uuid.uuid4())
+        print data
         collection.update({'name': table_name}, {'$push': {"field_list": data}})
+        return data['field_id']
     else:
         # 更新一条,更新前获取 新旧字段
         ret = collection.update({'field_list.field_id': field_id}, {'$set': {"field_list.$": data}})
@@ -62,15 +74,20 @@ def update_one_field(field_id, field_dic, table_name, field_old):
             if k == 'field_id': break
             if data[k] != field_old[k]:
                 update_dic[field_old[k]] = data[k]
-        print update_dic
         if update_dic != {}:
             new_ret = table_collection.update({}, {"$rename": update_dic}, upsert=False, multi=True)
-            print new_ret
         return ret['updatedExisting']
         # 更新一个之后要去修改其他字段
 
+# 删除一个field
+def delete_one_field(table_id,field_id):
+    collection = db['Assest']
+    # ret = collection.update({'_id': ObjectId(table_id)},{'$pull':{'field_list.field_id':field_id}},True,True)
+    ret = collection.update({ "field_list.field_id":field_id},{'$pull':{'field_list':{"field_id":field_id}}})
 
-table_collection = db['person']
+
+
+# table_collection = db['person']
 
 
 # print {old_name:name,old_display_name:display_name,old_show:show}

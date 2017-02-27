@@ -43,10 +43,10 @@
                                         <td>{{ assest.name }}</td>
                                         <td>{{ assest.display_name }}</td>
                                         <td>{{ assest.field_list |length }}</td>
-                                        <td><a href="#">修改表信息</a></td>
+                                        <td><a href="#" onclick=edit_table("{{ assest |mongo_id }}") >修改表信息</a></td>
                                         <td><a href="#" onclick=delete_table("{{ assest |mongo_id }}")>删除表</a></td>
                                         <script>
-                                            var str = 'id={{ assest |mongo_id}}&name={{ assest.name }}&display_name={{ assest.display_name }}&action=edit';
+                                            var str = 'id={{ assest |mongo_id}}&name={{ assest.name }}&display_name={{ assest.display_name }}';
                                             var encode64_str = window.btoa(window.encodeURIComponent(str));
                                             var edit_html = '<td><a href="/assest/manage?' + encode64_str + '">修改</a></td>';
                                             {#                                            console.log(window.encodeURIComponent(str));#}
@@ -62,6 +62,8 @@
                 </div>
             </div>
         </div>
+
+
     {% else %}
         <div class="wrapper">
             <div class="row">
@@ -80,25 +82,31 @@
                                     添加新字段 <i class="fa fa-plus"></i>
                                 </a>
                                 <table class="display table table-bordered table-striped" id="field_table">
-                                    <thead >
+                                    <thead>
                                     <tr>
-                                        <th is_input="False" name="'field_id">字段序号</th>
-                                        <th is_input="True" input_type="input"  class="th_name" name="field_name">字段名称</th>
-                                        <th is_input="True" input_type="input"  class="th_name" name="field_display">字段展示名称</th>
-                                        <th is_input="True" input_type="select" class="th_name" name="field_show">是否展示</th>
-                                        <th is_input="None" >编辑</th>
-                                        <th is_input="None" >删除</th>
+                                        <th is_input="False" name="field_id">字段序号</th>
+                                        <th is_input="True" input_type="input" class="th_name" name="field_name">字段名称
+                                        </th>
+                                        <th is_input="True" input_type="input" class="th_name" name="field_display">
+                                            字段展示名称
+                                        </th>
+                                        <th is_input="True" input_type="select" class="th_name" name="field_show">是否展示
+                                        </th>
+                                        <th is_input="None">编辑</th>
+                                        <th is_input="None">删除</th>
                                     </tr>
                                     </thead>
                                     <tbody>
                                     {% for field in assest_info.field_list %}
                                         <tr class="">
                                             <td class="field_info_td field_id_td">{{ field.field_id }}</td>
-                                            <td  class=" field_info_td field_name_td">{{ field.field_name }}</td>
-                                            <td  class=" field_info_td field_display_td">{{ field.field_display }}</td>
-                                            <td  class=" field_info_td field_show_td">{{ field.field_show }}</td>
-                                            <td><a class="edit" href="javascript:;" onclick="edit_field(this)">修改</a></td>
-                                            <td><a class="delete" href="javascript:;" onclick="delete_field(this)">删除</a></td>
+                                            <td class=" field_info_td field_name_td">{{ field.field_name }}</td>
+                                            <td class=" field_info_td field_display_td">{{ field.field_display }}</td>
+                                            <td class=" field_info_td field_show_td">{{ field.field_show }}</td>
+                                            <td class="edit_a"><a href="javascript:;" onclick="edit_field(this)">修改</a>
+                                            </td>
+                                            <td class="delete_a"><a href="javascript:;"
+                                                                    onclick="delete_field(this)">删除</a></td>
                                         </tr>
                                     {% endfor %}
 
@@ -112,67 +120,6 @@
 
                 </div>
             </div>
-            {#            <div class="row">#}
-            {#                <div class="col-sm-12">#}
-            {#                    <section class="panel">#}
-            {#                        <header class="panel-heading" id="table_name" table_name="{{ table_name }}">#}
-            {#                            修改 '{{ table_display_name }}({{ table_name }})'#}
-            {#                            <span class="tools pull-right">#}
-            {#                        <a href="javascript:;" class="fa fa-chevron-down"></a>#}
-            {#                        <a href="javascript:;" class="fa fa-times"></a>#}
-            {#                     </span>#}
-            {#                        </header>#}
-            {#                        <div class="panel-body">#}
-            {#                            <div class="adv-table editable-table ">#}
-            {#                                <div class="clearfix">#}
-            {#                                    <div class="btn-group">#}
-            {#                                        <button id="editable-sample_new" class="btn btn-primary">#}
-            {#                                            添加新字段 <i class="fa fa-plus"></i>#}
-            {#                                        </button>#}
-            {#                                    </div>#}
-            {#                                    <div class="btn-group pull-right">#}
-            {#                                        <button class="btn btn-default dropdown-toggle" data-toggle="dropdown">Tools <i#}
-            {#                                                class="fa fa-angle-down"></i>#}
-            {#                                        </button>#}
-            {#                                        <ul class="dropdown-menu pull-right">#}
-            {#                                            <li><a href="#">Print</a></li>#}
-            {#                                            <li><a href="#">Save as PDF</a></li>#}
-            {#                                            <li><a href="#">Export to Excel</a></li>#}
-            {#                                        </ul>#}
-            {#                                    </div>#}
-            {#                                </div>#}
-            {#                                <div class="space15"></div>#}
-            {#                                <table class="table table-striped table-hover table-bordered" id="editable-sample">#}
-            {#                                <table class="table table-striped table-hover table-bordered"        >#}
-            {#                                    <thead>#}
-            {#                                    <tr>#}
-            {#                                        <th >字段序号</th>#}
-            {#                                        <th>字段名称</th>#}
-            {#                                        <th>字段展示名称</th>#}
-            {#                                        <th>是否展示</th>#}
-            {#                                        <th>编辑</th>#}
-            {#                                        <th>删除</th>#}
-            {#                                    </tr>#}
-            {#                                    </thead>#}
-            {#                                    <tbody>#}
-            {#                                    {% for field in assest_info.field_list %}#}
-            {#                                        <tr class="">#}
-            {#                                            <td class="field_id_td">{{ field.field_id }}</td>#}
-            {#                                            <td old_value = {{ field.field_name }} class="field_name_td">{{  field.field_name}}</td>#}
-            {#                                            <td old_value = {{ field.field_display }} class="field_display_td">{{ field.field_display }}</td>#}
-            {#                                            <td old_value = {{ field.field_show }} class="field_show_td">{{ field.field_show }}</td>#}
-            {#                                            <td><a class="edit" href="javascript:;">Edit</a></td>#}
-            {#                                            <td><a class="delete" href="javascript:;">Delete</a></td>#}
-            {#                                        </tr>#}
-            {#                                    {% endfor %}#}
-            {#                                    </tbody>#}
-            {#                                </table>#}
-            {#                            </div>#}
-            {#                        </div>#}
-            {#                    </section>#}
-            {#                </div>#}
-            {#            </div>#}
-
 
         </div>
     {% endifequal %}
@@ -185,6 +132,38 @@
             src="/static/js/advanced-datatable/js/jquery.dataTables.js"></script>
     <script type="text/javascript" src="/static/js/data-tables/DT_bootstrap.js"></script>
     <script src="/static/js/editable-table.js"></script>
+    <script src="/static/js/bootbox.min.js"></script>
+    <script>
+        function edit_table(table_id) {
+            var message ='<div class="" id="edit_table_info"><div class="well" style="margin-top:25px"><form class="form-horizontal" role="form"><i>目前只可修改展示信息</i><div class="form-group"><label class="col-sm-3 control-label no-padding-right" for="new_table_display_name">表展示名称</label><div class="col-sm-9"><input type="text" id="new_table_display_name" placeholder="请输入新的展示名称" class="col-xs-10 col-sm-5"></div></div></form></div></div>';
+            bootbox.dialog({
+                title: "修改表信息",
+                message: message,
+                buttons: {
+                    "success": {
+                        "label": "<i class='icon-ok'></i> 保存",
+                        "className": "btn-sm btn-success",
+                        "callback": function () {
+{#                            var table_name = $("#new_table_name").val();#}
+                            var table_display_name = $("#new_table_display_name").val();
+                            var info = {table_display_name:table_display_name,table_id:table_id,action:'change_table'};
+                            $.post('/assest/manage',info,function () {
+                                window.location.reload();
+                            });
+                        }
+                    },
+                    "cancel": {
+                        "label": "<i class='icon-info'></i> 取消",
+                        "className": "btn-sm btn-danger",
+                        "callback": function () {
+                        }
+                    }
+                }
+            });
+        }
+
+    </script>
+
     <script>
         jQuery(document).ready(function () {
             EditableTable.init();
@@ -202,6 +181,8 @@
         }
     </script>
     <script>
+
+        // 添加field
         function add_field() {
             // 给一个表添加一行数据，但是列数不确定，每一列是否要插入，插入input还是select都不一定
             // is_input=False input_type = input or select 放到thead 里面去
@@ -213,65 +194,114 @@
             // 生成html
             var all_thead_th = thead.find('th');
             var new_tr_html = '';
-            $.each(all_thead_th,function () {
+            $.each(all_thead_th, function () {
                 var td_name = $(this).attr('name');
-                if($(this).attr('is_input')=='False'){
-                    new_tr_html +='<td class="'+td_name+'_td"></td>';
-                }else if($(this).attr('is_input')=='True'){
-                    if($(this).attr('input_type')=="input"){
-                        new_tr_html += '<td class="'+input_class+'  '+td_name+'_td"><input class="data"></td>';
-                    }else if($(this).attr('input_type')=="select"){
+                if ($(this).attr('is_input') == 'False') {
+                    new_tr_html += '<td class="' + td_name + '_td"></td>';
+                } else if ($(this).attr('is_input') == 'True') {
+                    if ($(this).attr('input_type') == "input") {
+                        new_tr_html += '<td class="' + input_class + '  ' + td_name + '_td"><input class="data"></td>';
+                    } else if ($(this).attr('input_type') == "select") {
                         var select_html = '<select class="data" ><option value="True">True</option><option value="False">False</option></select>';
-                        new_tr_html += '<td class="'+input_class+'  '+td_name+'_td">'+select_html+'</td>';
+                        new_tr_html += '<td class="' + input_class + '  ' + td_name + '_td">' + select_html + '</td>';
                     }
 
-                }else{
+                } else {
 
                 }
             });
-            var edit_html =    '<td class="edit_a"><a  href="javascript:;" onclick="save_field(this)">新增</a></td>';
-            var cancle_html =  '<td class= "delete_a"><a  href="javascript:;" onclick="cancle_field(this)">取消</a></td>';
-            new_tr_html= '<tr>'+new_tr_html+edit_html+cancle_html+'</tr>';
+            var edit_html = '<td class="edit_a"><a  href="javascript:;" onclick="save_field(this)">新增</a></td>';
+            var cancle_html = '<td class= "delete_a"><a  href="javascript:;" onclick="cancle_field(this,1)">取消</a></td>';
+            new_tr_html = '<tr>' + new_tr_html + edit_html + cancle_html + '</tr>';
             tbody.prepend(new_tr_html);
         }
         // 取消
-        function cancle_field(ths) {
+        function cancle_field(ths, type) {
             var ths_tr = $(ths).parents("tr");
-            var hide_td = ths_tr.find('td.field_id_td').length;
-            if(hide_td==0){
+            {#            var id_td = ths_tr.find('td.field_id_td').length;#}
+            if (type == 1) {
                 // 新增的时候取消
                 ths_tr.remove();
 
             } else {
                 var all_data = ths_tr.find("td.field_info_td");
                 $.each(all_data, function () {
-                    var value = $(this).children('input').attr('old_value');
+                    var value = $(this).attr('old_value');
                     $(this).html(value);
                 });
-                var edit_html = '<a  href="javascript:;" onclick="edit_table(this)">修改</a>';
-                var delete_html = '<a  href="javascript:;" onclick="delete_table(this)">删除</a>';
+                var edit_html = '<a  href="javascript:;" onclick="edit_field(this)">修改</a>';
+                var delete_html = '<a  href="javascript:;" onclick="delete_field(this)">删除</a>';
                 ths_tr.find('.edit_a ').html(edit_html);
                 ths_tr.find(".delete_a ").html(delete_html);
             }
         }
 
-        // 编辑 field
+        // 编辑 field  编辑之前考虑old value
         function edit_field(ths) {
+            var ths_tr = $(ths).parents("tr");
+            var table = $('#field_table');
+            var thead = table.find('thead');
+            var all_thead_th = thead.find('th');
+            $.each(all_thead_th, function () {
+                var td_name = $(this).attr('name');
+                var ths_td = ths_tr.find('.' + td_name + '_td');
+                var old_value = ths_td.attr('old_value', ths_td.text());
+                if ($(this).attr('is_input') == 'False') {
+                    console.log('nothing to do ...')
 
+                } else if ($(this).attr('is_input') == 'True') {
+                    if ($(this).attr('input_type') == "input") {
+
+                        var new_text = '<input class="data" value="' + ths_td.text() + '">';
+                        ths_td.html(new_text);
+                    } else if ($(this).attr('input_type') == "select") {
+                        var select_html = '<select class="data" ><option value="True">True</option><option value="False">False</option></select>';
+                        ths_td.html(select_html);
+                    }
+
+                } else {
+
+                }
+            });
+            var edit_html = '<a  href="javascript:;" onclick="save_field(this)">确定</a>';
+            var cancle_html = '<a  href="javascript:;" onclick="cancle_field(this,0)">取消</a>';
+            ths_tr.find('.edit_a').html(edit_html);
+            ths_tr.find('.delete_a').html(cancle_html);
         }
 
         // 删除 field
         function delete_field(ths) {
+            var ths_tr = $(ths).parents("tr");
+            var field_id = ths_tr.find('.field_id_td').text();
+            var data = {
+                action: 'delete_field',
+                field_id: field_id
+            };
+            if (field_id) {
+                $.ajax({
+                    type: 'POST',
+                    url: window.location.href,
+                    data: data,
+                    success: function (ret) {
+                        console.log(ret)
+                        if (ret) {
+                            ths_tr.remove();
+                        }
+                    },
+                    dataType: 'json'
+                })
+            } else {
+                alert('刚添加字段，请刷新后再删除.');
+            }
 
         }
 
         // 保存field
         function save_field(ths) {
             var ths_tr = $(ths).parents("tr");
-            var table_name = $('#table_name').attr('name');
-            var field_id =ths_tr.find('.field_id_td').text();
-            var all_field_info  = ths_tr.find('.field_info_td');
-            $.each(all_field_info,function () {
+            var field_id = ths_tr.find('.field_id_td').text();
+            var all_field_info = ths_tr.find('.field_info_td');
+            $.each(all_field_info, function () {
                 // 去掉input或者其他输入框
                 var value = $(this).find('.data').val();
                 $(this).html(value);
@@ -280,11 +310,11 @@
             var old_show = ths_tr.find('.field_show_td').attr('old_value');
             var old_display_name = ths_tr.find('.field_display_td').attr('old_value');
 
-             var field_name = ths_tr.find('.field_name_td').text();
+            var field_name = ths_tr.find('.field_name_td').text();
             var field_show = ths_tr.find('.field_show_td').text();
             var field_display = ths_tr.find('.field_display_td').text();
             var data = {
-                table_name: table_name,
+                action: "save_field",
                 field_id: field_id,
                 field_old: JSON.stringify({
                     field_name: old_name,
@@ -298,21 +328,24 @@
                     field_display: field_display
                 })
             };
+            console.log(data);
             $.ajax({
                 type: 'POST',
                 url: window.location.href,
                 data: data,
-                success: function (ret) {
-                    console.log(ret)
+                complete: function (ret) {
+                    console.log(ret.responseText);
+                    ths_tr.find('.field_id_td').html(ret.responseText);
+                    ths_tr.addClass('field_info_td ');
                 },
+
                 dataType: 'json'
             });
-            var edit_html = '<a  href="javascript:;" onclick="edit_table(this)">修改</a>';
-            var delete_html = '<a  href="javascript:;" onclick="delete_table(this)">删除</a>';
+            var edit_html = '<a  href="javascript:;" onclick="edit_field(this)">修改</a>';
+            var delete_html = '<a  href="javascript:;" onclick="delete_field(this)">删除</a>';
             ths_tr.find('.edit_a ').html(edit_html);
             ths_tr.find(".delete_a ").html(delete_html);
         }
-
 
 
     </script>

@@ -86,21 +86,32 @@ def assest_manage(req):
             encode64_url = req.get_full_path().split('?')[1]
             args_str = utils.base64_url_decode(encode64_url)
             args_dic = utils.parser_url(args_str)
+            # 判断链接里是否有 id name display_name
             if args_dic.has_key('id')  and args_dic.has_key('name') and args_dic.has_key('display_name'):
-                if args_dic['action'][0]=='edit':
+                # 如果有并且action 有edit，那么就是要修改字段
+                table_name = args_dic['name'][0]
+                table_id = args_dic['id'][0]
+                table_display_name = args_dic['display_name'][0]
+                # if args_dic['action'][0]=='edit':
+                if req.POST.get('action')=='save_field':
                     # 要修改字段
-                    table_name = args_dic['name'][0]
-                    table_id = args_dic['id'][0]
-                    table_display_name = args_dic['display_name'][0]
                     field_id = req.POST.get('field_id')
-                    table_name = req.POST.get('table_name')
                     field_info = req.POST.get('field_info')
                     field_old = req.POST.get('field_old')
                     import json
+
                     field_info =  json.loads(field_info)
                     field_old = json.loads(field_old)
-                    mongo_ops.update_one_field(field_id,field_info,table_name,field_old)
+                    ret = mongo_ops.update_one_field(field_id,field_info,table_name,field_old)
+                    if field_old == {}:# 如果是新增，那么就返回ID值。
+                        return HttpResponse(ret)
                     return HttpResponse("true")
+                elif req.POST.get('action') == "delete_field":
+                    field_id = req.POST.get('field_id')
+                    mongo_ops.delete_one_field(table_id,field_id)
+                    return HttpResponse('true')
+
+
             else:
                 if args_dic['action'][0] == 'delete':
                     table_id = args_dic['id'][0]
@@ -108,7 +119,12 @@ def assest_manage(req):
                     return HttpResponse('true')
                 else:
                     return HttpResponse('error')
-
+        else:
+            if req.POST.get('action') == "change_table":
+                table_display_name = req.POST.get('table_display_name')
+                table_id = req.POST.get('table_id')
+                mongo_ops.rename_Assest(table_id,table_display_name)
+                return HttpResponse('true')
 
 def table(req,table_name):
     if req.method == "GET":
@@ -117,8 +133,12 @@ def table(req,table_name):
         table_info = mongo_ops.get_Assest_info(table_name)
         table_field = table_info['field_list']
         field_name_list = []
-        for field in table_field:
-            field_name_list.append(field['field_name'])
+        for index,field in enumerate(table_field):
+            if field.has_key('field_name'):
+                field_name_list.append(field['field_name'])
+            else:
+                # 删除没有field_name 的字段
+                del  table_field[index]
         data = mongo_ops.get_table_info(table_name,field_name_list)
 
         return render(req,'Table_Info.html',locals())
